@@ -103,19 +103,32 @@ class Stats<T> {
 
     return frecuenciesList;
   }
-
-  T getMode() {
+  
+  List<T> getMode() {
     // calculate if null
     if (this.mode == null) {  
+      List<T> tmpModes = new List<T>();
       List<T> tmpMode = new List<T>();
-      tmpMode = getFrecuencies()[0];
 
+      tmpMode = getFrecuencies()[0];
+      tmpModes.add(tmpMode[0]);
+
+      // O(n)
       for (var i = 1; i < getFrecuencies().length; i++) {
+        
+        // cur element appears more times than curMode 
         if ((tmpMode[1] as num) < (getFrecuencies()[i][1] as num)) {
           tmpMode = getFrecuencies()[i];
+          tmpModes.clear();
+          tmpModes.add(tmpMode[0]);
+          continue;
+        }
+        // if cur element has same frecuency than tmpMode then is added to list
+        if ((tmpMode[1] as num) == (getFrecuencies()[i][1] as num)) {
+          tmpModes.add(getFrecuencies()[i][0]);
         }
       }
-      this.mode = tmpMode[0];
+      this.mode = tmpModes;
     }
 
     return this.mode;
