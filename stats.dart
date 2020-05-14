@@ -11,6 +11,7 @@ class Stats<T> {
   
   List<T> list;
   List<T> sortedList;
+  List<List<T>> frecuenciesList;
   
   //
   // measured of central tendency
@@ -38,7 +39,9 @@ class Stats<T> {
   // constructor  
   Stats(List<T> this.list) {
 
+    // init lists
     this.sortedList = []..addAll(list)..sort();
+    this.frecuenciesList = new List<List<T>>();
     
     this.max = sortedList.last;
     this.min = sortedList.first;
@@ -46,6 +49,7 @@ class Stats<T> {
     this.n = sortedList.length;
     // sum all elements in list
     this.summation = sortedList.fold(0, (previousValue, element) => previousValue + (element as num));
+
   }
   
   
@@ -69,7 +73,9 @@ class Stats<T> {
   // return [ [el, frecuency], [] ]
   List<List<T>> getFrecuencies() {
 
-    List<List<T>> result = new List<List<T>>();
+    if (frecuenciesList.length != 0) 
+      return frecuenciesList;
+
     T tmpValue = sortedList[0];
     int curFrecuency = 0;
 
@@ -81,10 +87,10 @@ class Stats<T> {
         if (i == (sortedList.length-1) && tmpValue == sortedList[i])
             curFrecuency++;
 
-        result.add([tmpValue,(curFrecuency as T)]);
+        frecuenciesList.add([tmpValue,(curFrecuency as T)]);
 
         if (i == (sortedList.length-1) && tmpValue != sortedList[i]) {
-            result.add([sortedList[i],(1 as T)]);
+            frecuenciesList.add([sortedList[i],(1 as T)]);
         } 
         curFrecuency = 0;
       } 
@@ -92,15 +98,36 @@ class Stats<T> {
       tmpValue = sortedList[i];
     }
 
-    return result;
+    return frecuenciesList;
   }
 
   T getMode() {
     // calculate if null
+    if (this.mode == null) {  
+      List<T> tmpMode = new List<T>();
+      tmpMode = getFrecuencies()[0];
+
+      for (var i = 1; i < getFrecuencies().length; i++) {
+        if ((tmpMode[1] as num) < (getFrecuencies()[i][1] as num)) {
+          tmpMode = getFrecuencies()[i];
+        }
+      }
+      this.mode = tmpMode[0];
+    }
+
     return this.mode;
   }
 
-  T getMedian() {}
+  T getMedian() {
+    if (this.median == null) {
+      if (n % 2 == 0)
+        this.median = this.sortedList[ ((n + 1) ~/ 2)];
+      else
+        this.median = this.sortedList[n ~/ 2];
+    }
+
+    return this.median;
+  }
   
 }
 
@@ -108,7 +135,7 @@ void main() {
   
   // Stats test = Stats([1,1,4,5,4,3,4,7,7,8,9,0.5,10.2]);
 
-    Stats test = Stats([1,1,2,2]);
+    Stats test = Stats([1,1,2,2,7,8.7,.1,7,9.6,6,7,8]);
 
 
   print(test.sortedList);
@@ -116,8 +143,11 @@ void main() {
   print(test.max);
   print(test.summation);
   print(test.getMean());
-
   print(test.getFrecuencies());
+  print("----");
+  print(test.getMode());
+  print(test.getMedian());
+
   
 }
 
