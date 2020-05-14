@@ -58,8 +58,11 @@ class Stats<T> {
     if (this.arithmeticMean == null) 
       this.arithmeticMean = this.summation / n;
 
-    if (this.geometricMean == null)
-      this.geometricMean = math.pow(summation, 1/n);
+    if (this.geometricMean == null) {
+      // GM = (x1*x2...xn)^(1/n)
+      var xn = this.sortedList.fold(sortedList[0], (previousValue, element) => previousValue*element);
+      this.geometricMean = math.pow(xn, 1/n);
+    }
     
     if (this.ponderedMean == null) {
       // PM = p1*X1 + p2*X2 + pn*Xn / n 
