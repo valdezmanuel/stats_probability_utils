@@ -17,8 +17,8 @@ class Stats<T> {
   // measured of central tendency
   //
   
-  T min;
-  T max;
+  num min;
+  num max;
   
   // mean
   double summation;
@@ -28,13 +28,17 @@ class Stats<T> {
   double geometricMean;
   double ponderedMean;
 
-  T mode;
+  List<T> mode;
   T median;
 
   //
   // dispersion measure
   //
   // ---
+  List<double> standardDeviation;
+  List<double> variance;
+  num range;
+
   
   // constructor  
   Stats(List<T> this.list) {
@@ -43,8 +47,10 @@ class Stats<T> {
     this.sortedList = []..addAll(list)..sort();
     this.frecuenciesList = new List<List<T>>();
     
-    this.max = sortedList.last;
-    this.min = sortedList.first;
+    this.max = sortedList.last as num;
+    this.min = sortedList.first as num;
+
+    this.range =  this.max - this.min;
 
     this.n = sortedList.length;
     // sum all elements in list
@@ -82,6 +88,7 @@ class Stats<T> {
     T tmpValue = sortedList[0];
     int curFrecuency = 0;
 
+    // O(n)
     for(int i = 1 ; i < sortedList.length ; i++) {
       curFrecuency++;
 
@@ -144,6 +151,33 @@ class Stats<T> {
 
     return this.median;
   }
+
+  // [sample,population]
+  List<double> getVariance() {
+    if (this.variance == null) {
+      // E (Xi-mean) : i = 1 to n
+      double Xn = this.sortedList.fold(0, (previousValue, element) => 
+        previousValue + math.pow((element as num) - this.getMean()[0], 2)
+      );            
+
+      this.variance = [ (Xn / (this.n - 1)) , Xn / this.n ] ;
+
+    }
+    return this.variance;
+  }
+
+  // [sample,population]
+  List<double> getStandardDeviation() {
+    if (this.standardDeviation == null) {
+      this.standardDeviation =  [math.sqrt(this.getVariance()[0]), math.sqrt(this.getVariance()[1])];
+    }
+
+    return this.standardDeviation;
+  }
+
+  num getRange() {
+    return this.range;
+  }
   
 }
 
@@ -151,7 +185,7 @@ void main() {
   
   // Stats test = Stats([1,1,4,5,4,3,4,7,7,8,9,0.5,10.2]);
 
-    Stats test = Stats([1,1,2,2,7,8.7,.1,7,9.6,6,7,8]);
+    Stats test = Stats([1,1,1,2,3,4,2,5,3]);
 
 
   print(test.sortedList);
@@ -160,10 +194,13 @@ void main() {
   print(test.summation);
   print(test.getMean());
   print(test.getFrecuencies());
-  print("----");
   print(test.getMode());
   print(test.getMedian());
+  print("-- disperions measure --");
 
+  print(test.getVariance());
+  print(test.getStandardDeviation());
+  print(test.getRange());
   
 }
 
