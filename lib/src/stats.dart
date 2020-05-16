@@ -1,8 +1,8 @@
 //  stats.dart
 //  Probability_stats_utils
 //
-//  Copyright © 2020 valdezprojects
-//  Manuel Valdez
+//  Copyright © 2020 valdezprojects, Yovanny Nogales
+//  Manuel Valdez, Yovanny Nogales
 //
 
 import 'dart:math' as math;
@@ -180,27 +180,3 @@ class Stats<T> {
   }
   
 }
-
-void main() {
-  
-  // Stats test = Stats([1,1,4,5,4,3,4,7,7,8,9,0.5,10.2]);
-
-    Stats test = Stats([1,1,1,2,3,4,2,5,3]);
-
-
-  print(test.sortedList);
-  print(test.min);
-  print(test.max);
-  print(test.summation);
-  print(test.getMean());
-  print(test.getFrecuencies());
-  print(test.getMode());
-  print(test.getMedian());
-  print("-- disperions measure --");
-
-  print(test.getVariance());
-  print(test.getStandardDeviation());
-  print(test.getRange());
-  
-}
-
