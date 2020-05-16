@@ -12,18 +12,16 @@ class Stats<T> {
   List<T> list;
   List<T> sortedList;
   List<List<T>> frecuenciesList;
-  
   //
   // measured of central tendency
   //
-  
+
   num min;
   num max;
   
   // mean
   double summation;
   int n;
-
   double arithmeticMean;
   double geometricMean;
   double ponderedMean;
@@ -39,7 +37,11 @@ class Stats<T> {
   List<double> variance;
   num range;
 
-  
+
+  // Grouped Data
+  int k;
+  double ai;
+   
   // constructor  
   Stats(List<T> this.list) {
 
@@ -178,16 +180,50 @@ class Stats<T> {
   num getRange() {
     return this.range;
   }
+
+  //  Agrouped data
+  
+  int getIntervalsBySturgesRule() {
+    //  3.22 * math.log10(this.n);
+    if (this.k != null)
+      return this.k;
+    // ln/ln10 = log10
+    double k =  1 + (3.322 * (math.log(this.n)/math.ln10));
+    int floorK = k.floor();
+
+    if (floorK % 2 == 0)
+       this.k = floorK + 1;
+    else
+      this.k = floorK;
+
+    return this.k;
+  }
+
+  int getIntervalsByNumber(int classes) {
+    double k =  classes/this.n;
+    int floorK = k.floor();
+    if (floorK % 2 == 0)
+      return floorK + 1;
+    return floorK;
+  }
+
+  double getAmplitude() {
+    if (this.ai != null)
+      return this.ai;
+
+    // sturges rule by default
+    this.ai = this.getRange() / this.getIntervalsBySturgesRule();
+    return this.ai;
+  }
   
 }
 
 void main() {
   
   // Stats test = Stats([1,1,4,5,4,3,4,7,7,8,9,0.5,10.2]);
+  Stats test = Stats([1,1,1,2,3,4,2,5,3,6,5,4,6,5,4,6,7,3,6,7]);
 
-    Stats test = Stats([1,1,1,2,3,4,2,5,3]);
-
-
+  print("ungrouped data\n");
   print(test.sortedList);
   print(test.min);
   print(test.max);
@@ -196,11 +232,18 @@ void main() {
   print(test.getFrecuencies());
   print(test.getMode());
   print(test.getMedian());
-  print("-- disperions measure --");
 
+  print("\ndispersion measure");
   print(test.getVariance());
   print(test.getStandardDeviation());
   print(test.getRange());
+
+  print("\n\ngrouped data");
+  print(test.n);
+  print(test.getIntervalsBySturgesRule());
+  print(test.getAmplitude());
+  // print(test.)
+
   
 }
 
