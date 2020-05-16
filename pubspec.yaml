@@ -1,0 +1,13 @@
+name: stats_probability_utils
+description: >-
+  Calculate common statistical values for a set of numbers: max, min, mean,
+  median and standard deviation.
+version: 1.0.0
+homepage: https://github.com/valdezmanuel/stats_probability_utils
+
+environment:
+  sdk: '>=2.7.0 <3.0.0'
+
+dependencies:
+
+dev_dependencies:
