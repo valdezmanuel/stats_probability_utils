@@ -27,10 +27,15 @@ void main() {
     print('------------------');
     print('  Lower class limit: ${ groupedClassLimit['lowerClassLimit'] }');
     print('  Upper class limit: ${ groupedClassLimit['upperClassLimit'] }');
-    print('  Mid point: ${ groupedClassLimit['midPoint'] }');
-    print('  Absolute frecuency: ${ groupedClassLimit['absolueteFrecuency'] }');
-    print('  Accumulated Relative frecuency: ${ groupedClassLimit['accumulatedRelativeFrecuency'] }');
-    print('  Accumulated frecuency: ${ groupedClassLimit['accumulatedFrecuency'] }');
+    print('  Mid point (Xi): ${ groupedClassLimit['midpoint'] }');
+    print('  Absolute frecuency (Fi): ${ groupedClassLimit['absoluteFrecuency'] }');
+    print('  Accumulated Relative frecuency (Fr): ${ groupedClassLimit['accumulatedRelativeFrecuency'] }');
+    print('  Accumulated frecuency (F): ${ groupedClassLimit['accumulatedFrecuency'] }');
+    print('  XiFi: ${ groupedClassLimit['XiFi'] }');
     print('------------------\n\n');
   }
+
+  print(stats.getMeanOfGroupedData());
+  print(stats.getMedianOfGroupedData());
+  print(stats.getModeOfGroupedData());
 }
