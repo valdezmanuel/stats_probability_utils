@@ -44,4 +44,8 @@ void main() {
   print(stats.getMeanOfGroupedData());
   print(stats.getMedianOfGroupedData());
   print(stats.getModeOfGroupedData());
+
+  print('-- measures of disp for grouped data ---');
+  print(stats.getVarianceGrouped());
+  print(stats.getStandardDeviationGrouped());
 }

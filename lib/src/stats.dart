@@ -39,8 +39,10 @@ class Stats<T> {
   List<double> variance;
   num range;
 
-
-  // Grouped Data
+  // grouped data
+  List<double> standardDeviationGrouped;
+  List<double> varianceGrouped;
+  
   int k;
   double ai;
    
@@ -484,4 +486,32 @@ class Stats<T> {
 
     return this._maxFrecuencyClass;
   }
+
+  // measures of dispersion for grouped data
+
+  // [sample,population]
+  List<double> getVarianceGrouped() {
+    if (this.varianceGrouped == null) {
+      double mean = this.getMeanOfGroupedData();
+      // E (interval - mean)^2 * (frecuency) 
+      double sum = 0;
+      for (Map<String, dynamic> frecuencyRow in getGroupedFrecuencyMap()) {
+          sum += math.pow(frecuencyRow['midpoint'] - mean,2) * frecuencyRow['absoluteFrecuency'];
+      } 
+      this.varianceGrouped = [sum / (this.n-1), sum / this.n];
+
+    }
+    return this.varianceGrouped;
+  }
+
+  // [sample, population]
+  List<double> getStandardDeviationGrouped() {
+     if (this.standardDeviationGrouped == null) {
+      this.standardDeviationGrouped =  [math.sqrt(this.getVarianceGrouped()[0]), 
+                                math.sqrt(this.getVarianceGrouped()[1])];
+    }
+
+    return this.standardDeviationGrouped;
+  }
+
 }
