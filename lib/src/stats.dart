@@ -12,6 +12,7 @@ class Stats<T> {
   List<T> list;
   List<T> sortedList;
   List<List<T>> frecuenciesList;
+  List<Map<String, dynamic>> _groupedFrecuencyMap;
   //
   // measured of central tendency
   //
@@ -58,6 +59,8 @@ class Stats<T> {
     // sum all elements in list
     this.summation = sortedList.fold(0, (previousValue, element) => previousValue + (element as num));
 
+    // Generates the frecuency table of grouped data
+    this._groupedFrecuencyMap = this._calculateGroupedFrecuencyMap();
   }
   
   
@@ -215,5 +218,95 @@ class Stats<T> {
     this.ai = this.getRange() / this.getIntervalsBySturgesRule();
     return this.ai;
   }
-  
+
+  /// Gets grouped frecuency map
+  List<Map<String, dynamic>> getGroupedFrecuencyMap() {
+    return _groupedFrecuencyMap;
+  }
+
+  /// Generates a grouped frecuency map through a list
+  List<Map<String, dynamic>> _calculateGroupedFrecuencyMap() {
+    List<Map<String, dynamic>> groupedFrecuencyMap = List<Map<String, dynamic>>();
+
+    int indexOfClass = 0;
+    Map<String, dynamic> classLimitElement = Map<String, dynamic>();
+    
+    // Gets amplitude and intervals of data
+    final amplitudeOfInterval = this.getAmplitude();
+    final numberOfIntervals = this.getIntervalsBySturgesRule();
+    // Defines frecuencies
+    int accumulatedFrecuency = 0;
+    // Defines the class limits
+    double lowerClassLimit = this.min.toDouble();
+    double upperClassLimit = 0.0;
+
+    // Calculates the limit class and results
+    for (indexOfClass; indexOfClass < numberOfIntervals; indexOfClass++) {
+      classLimitElement = Map<String, dynamic>();
+
+      // Initializes the class limits
+      classLimitElement['lowerClassLimit'] = lowerClassLimit;
+      upperClassLimit = lowerClassLimit + amplitudeOfInterval;
+      classLimitElement['upperClassLimit'] = upperClassLimit;
+
+      // Calculates the mid point of the class limit
+      classLimitElement['midPoint'] = this._calculateMidPoint(
+        lowerClassLimit: classLimitElement['lowerClassLimit'],
+        upperClassLimit: classLimitElement['upperClassLimit']
+      );
+
+      // Calculates absolute frecuencies for class limit
+      classLimitElement['absolueteFrecuency'] = this._calculateAbsoluteFrecuency(
+        lowerClassLimit: classLimitElement['lowerClassLimit'],
+        upperClassLimit: classLimitElement['upperClassLimit']
+      );
+
+      classLimitElement['accumulatedRelativeFrecuency'] = this._calculateAbsoluteRelativeFrecuency(
+        absolueteFrecuency: classLimitElement['absolueteFrecuency'].toDouble()
+      );
+
+      accumulatedFrecuency += classLimitElement['absolueteFrecuency'];
+      classLimitElement['accumulatedFrecuency'] = accumulatedFrecuency;
+
+      groupedFrecuencyMap.add(classLimitElement);
+
+      // Reasigns the lower class limit for the next class limit iteration
+      lowerClassLimit = upperClassLimit;
+    }
+
+    return groupedFrecuencyMap;
+  }
+
+  /// Calculates a mid point for a class limit
+  double _calculateMidPoint({
+    double lowerClassLimit,
+    double upperClassLimit
+  }) {
+    return (lowerClassLimit + upperClassLimit) / 2;
+  }
+
+  /// Calculates absolute frecuency for a class limit
+  int _calculateAbsoluteFrecuency({
+    double lowerClassLimit,
+    double upperClassLimit
+  }) {
+    int counterOfFrecuncy = 0;
+    int indexInSortedList = 0;
+    for (indexInSortedList; indexInSortedList < this.sortedList.length; indexInSortedList++) {
+      if (
+        (this.sortedList[indexInSortedList] as num) >= lowerClassLimit &&
+        (this.sortedList[indexInSortedList] as num) < upperClassLimit
+      )
+        counterOfFrecuncy++;
+    }
+    // print(this.sortedList.where(item => item >= lowerClassLimit && item < upperClassLimit));
+    return counterOfFrecuncy;
+  }
+
+  /// Calculates absolute relative frecuency for a class limit
+  double _calculateAbsoluteRelativeFrecuency({
+    double absolueteFrecuency
+  }) {
+    return absolueteFrecuency / this.n;
+  }
 }
