@@ -59,8 +59,6 @@ class Stats<T> {
     // sum all elements in list
     this.summation = sortedList.fold(0, (previousValue, element) => previousValue + (element as num));
 
-    // Generates the frecuency table of grouped data
-    this._groupedFrecuencyMap = this._calculateGroupedFrecuencyMap();
   }
   
   
@@ -221,7 +219,11 @@ class Stats<T> {
 
   /// Gets grouped frecuency map
   List<Map<String, dynamic>> getGroupedFrecuencyMap() {
-    return _groupedFrecuencyMap;
+    if (this._groupedFrecuencyMap != null)
+      return this._groupedFrecuencyMap;
+
+    this._groupedFrecuencyMap = this._calculateGroupedFrecuencyMap();
+    return this._groupedFrecuencyMap;
   }
 
   /// Generates a grouped frecuency map through a list

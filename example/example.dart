@@ -17,6 +17,9 @@ void main() {
   print(stats.getStandardDeviation());
   print(stats.getRange());
 
+  print("--grouped data--");
+  print(stats.getIntervalsBySturgesRule());
+  print(stats.getAmplitude());
   print('-- Grouped frecuency table --\n\n');
   Map<String, dynamic> groupedClassLimit;
   List<Map<String, dynamic>> groupedTable = stats.getGroupedFrecuencyMap();
