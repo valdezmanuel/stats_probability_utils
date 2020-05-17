@@ -48,4 +48,5 @@ void main() {
   print('-- measures of disp for grouped data ---');
   print(stats.getVarianceGrouped());
   print(stats.getStandardDeviationGrouped());
+  print(stats.getQuartiles());
 }

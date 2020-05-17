@@ -28,7 +28,7 @@ class Stats<T> {
   double ponderedMean;
 
   List<T> mode;
-  T median;
+  num median;
   int _medianPosition;
 
   //
@@ -56,6 +56,11 @@ class Stats<T> {
   // Grouped mode
   List<double> _groupedMode;
   int _maxFrecuencyClass;
+
+  // position measures
+  List<num> quartiles;
+  List<num> deciles;
+  List<num> percentiles;
 
   // constructor  
   Stats(List<T> this.list) {
@@ -169,11 +174,25 @@ class Stats<T> {
     return this._medianPosition;
   }
 
-  T getMedian() {
-    if (this.median == null)
-      this.median = this.sortedList[this._getMedianPosition()];
-
+  num getMedian() {
+    if (this.median == null) {
+      if (n % 2 == 0)
+        this.median = ((this.sortedList[n ~/ 2 -1] as num) + (this.sortedList[n ~/ 2] as num)) / 2;
+      else
+        this.median = this.sortedList[n ~/ 2] as num;
+    }
     return this.median;
+  }
+
+  num _getMedianOfList(List<T> list) {
+
+    list.sort();
+    int _n = list.length;  
+
+    if (_n % 2 == 0)
+      return  ((list[(_n) ~/ 2 -1 ] as num) + (list[(_n) ~/2] as num)) /2;
+    else
+      return list[_n ~/ 2] as num;
   }
 
   // [sample,population]
@@ -512,6 +531,35 @@ class Stats<T> {
     }
 
     return this.standardDeviationGrouped;
+  }
+
+  // position measures
+  List<T> _copyListInRange(List<T> source, int start, int end) {
+
+    List<T> target = new List<T>();
+    if (source.length < end) {
+      return null;
+    }
+    
+    for(int i = start ; i < end ; ++i) {
+      target.add(source[i]);
+    }
+    return target;
+  }
+
+  // quartiles, deciles, percentiles
+  List<num> getQuartiles() {
+
+    if (this.quartiles == null) {
+      
+      num q1 = this._getMedianOfList(this._copyListInRange(this.sortedList, 0, this._getMedianPosition()));
+      num q2 = this.getMedian();
+      num q3 = this._getMedianOfList(this._copyListInRange(this.sortedList, this._getMedianPosition(), this.sortedList.length));
+
+      this.quartiles = [q1,q2,q3];
+    }
+
+    return this.quartiles;
   }
 
 }
