@@ -361,12 +361,18 @@ class Stats<T> {
     if (this._groupedMedian == null) {
       int indexOfGroupedFrecuencyMap = 0;
       int medianPosition = this._getMedianPosition();
+      int previousAbsoluteFrecuency = 0;
 
       for (
         indexOfGroupedFrecuencyMap;
         indexOfGroupedFrecuencyMap < this._groupedFrecuencyMap.length;
         indexOfGroupedFrecuencyMap++
       ) {
+
+        if (indexOfGroupedFrecuencyMap > 0) {
+          previousAbsoluteFrecuency = this._groupedFrecuencyMap[indexOfGroupedFrecuencyMap - 1]['absoluteFrecuency'];
+        }
+
         // Get median in upper class limit
         if (medianPosition == this._groupedFrecuencyMap[indexOfGroupedFrecuencyMap]['accumulatedFrecuency']) {
           this._groupedMedian = this._groupedFrecuencyMap[indexOfGroupedFrecuencyMap]['upperClassLimit'];
@@ -379,7 +385,7 @@ class Stats<T> {
         ) {
           this._groupedMedian = this._calculateMedianOfGroupedData(
             lowerClassLimit: this._groupedFrecuencyMap[indexOfGroupedFrecuencyMap]['lowerClassLimit'],
-            previousAccumulatedFrecuency: this._groupedFrecuencyMap[indexOfGroupedFrecuencyMap - 1]['accumulatedFrecuency'],
+            previousAccumulatedFrecuency: previousAbsoluteFrecuency,
             absoluteFrecuency: this._groupedFrecuencyMap[indexOfGroupedFrecuencyMap]['absoluteFrecuency']
           );
           break;
@@ -408,6 +414,8 @@ class Stats<T> {
     if (this._groupedMode == null) {
       int indexOfGroupedFrecuencyMap = 0;
       int maxFrecuencyClass = _getMaxFrecuencyClass();
+      int previousAbsoluteFrecuency = 0;
+      int nextAbsoluteFrecuency = 0;
 
       this._groupedMode = List<double>();
 
@@ -416,16 +424,29 @@ class Stats<T> {
         indexOfGroupedFrecuencyMap < this._groupedFrecuencyMap.length;
         indexOfGroupedFrecuencyMap++
       ) {
+        if (maxFrecuencyClass == 1) {
+          break;
+        }
+        
+        if (indexOfGroupedFrecuencyMap > 0) {
+          previousAbsoluteFrecuency = this._groupedFrecuencyMap[indexOfGroupedFrecuencyMap - 1]['absoluteFrecuency'];
+        }
+
+        if (indexOfGroupedFrecuencyMap < this._groupedFrecuencyMap.length - 1) {
+          nextAbsoluteFrecuency = this._groupedFrecuencyMap[indexOfGroupedFrecuencyMap + 1]['absoluteFrecuency'];
+        } else {
+          nextAbsoluteFrecuency = 0;
+        }
+        
         // Get mode in max class limit with max absolute frecuency
         if (
-          indexOfGroupedFrecuencyMap > 0 &&
           maxFrecuencyClass == this._groupedFrecuencyMap[indexOfGroupedFrecuencyMap]['absoluteFrecuency']
         ) {
           this._groupedMode.add(
             this._calculateModeOfGroupedData(
               lowerClassLimit: this._groupedFrecuencyMap[indexOfGroupedFrecuencyMap]['lowerClassLimit'],
-              previousAbsoluteFrecuency: this._groupedFrecuencyMap[indexOfGroupedFrecuencyMap - 1]['absoluteFrecuency'],
-              nextAbsoluteFrecuency: this._groupedFrecuencyMap[indexOfGroupedFrecuencyMap + 1]['absoluteFrecuency'],
+              previousAbsoluteFrecuency: previousAbsoluteFrecuency,
+              nextAbsoluteFrecuency: nextAbsoluteFrecuency,
               currentAbsoluteFrecuency: this._groupedFrecuencyMap[indexOfGroupedFrecuencyMap]['absoluteFrecuency']
             )
           );
