@@ -361,7 +361,7 @@ class Stats<T> {
     if (this._groupedMedian == null) {
       int indexOfGroupedFrecuencyMap = 0;
       int medianPosition = this._getMedianPosition();
-      int previousAbsoluteFrecuency = 0;
+      int previousAccumulatedFrecuency = 0;
 
       for (
         indexOfGroupedFrecuencyMap;
@@ -370,7 +370,7 @@ class Stats<T> {
       ) {
 
         if (indexOfGroupedFrecuencyMap > 0) {
-          previousAbsoluteFrecuency = this._groupedFrecuencyMap[indexOfGroupedFrecuencyMap - 1]['absoluteFrecuency'];
+          previousAccumulatedFrecuency = this._groupedFrecuencyMap[indexOfGroupedFrecuencyMap - 1]['accumulatedFrecuency'];
         }
 
         // Get median in upper class limit
@@ -385,7 +385,7 @@ class Stats<T> {
         ) {
           this._groupedMedian = this._calculateMedianOfGroupedData(
             lowerClassLimit: this._groupedFrecuencyMap[indexOfGroupedFrecuencyMap]['lowerClassLimit'],
-            previousAccumulatedFrecuency: previousAbsoluteFrecuency,
+            previousAccumulatedFrecuency: previousAccumulatedFrecuency,
             absoluteFrecuency: this._groupedFrecuencyMap[indexOfGroupedFrecuencyMap]['absoluteFrecuency']
           );
           break;
@@ -402,7 +402,7 @@ class Stats<T> {
     int previousAccumulatedFrecuency,
     int absoluteFrecuency
   }) {
-    return lowerClassLimit + (((((this.n / 2) - previousAccumulatedFrecuency) / absoluteFrecuency)) * this.getAmplitude());
+    return lowerClassLimit + ((((this.n / 2) - previousAccumulatedFrecuency) / absoluteFrecuency) * this.getAmplitude());
   }
 
   @pragma('stats:mode-of-group-data')
