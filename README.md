@@ -79,8 +79,3 @@ print(stats.getQuartiles()); [2.5,4.0,6.0]
 
 ## Run Example
 * Run `dart example/example.dart`
-## Authors
-[Manuel Valdez](mailto:valdezzmanuel88@gmail.com)
-[Yovanny Nogales](mailto:nverayovanny@gmail.com)
-
-
