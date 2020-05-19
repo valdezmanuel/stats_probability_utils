@@ -63,66 +63,68 @@ class Stats<T> {
   List<num> percentiles;
 
   // constructor  
-  Stats(List<T> this.list) {
+  Stats(List<T> list) {
 
     // init lists
-    this.sortedList = []..addAll(list)..sort();
-    this.frecuenciesList = new List<List<T>>();
+    sortedList = [...list]..sort();
+    frecuenciesList = <List<T>>[];
     
-    this.max = sortedList.last as num;
-    this.min = sortedList.first as num;
+    max = sortedList.last as num;
+    min = sortedList.first as num;
 
-    this.range =  this.max - this.min;
+    range =  max - min;
 
-    this.n = sortedList.length;
+    n = sortedList.length;
     // sum all elements in list
-    this.summation = sortedList.fold(0, (previousValue, element) => previousValue + (element as num));
+    summation = sortedList.fold(0,
+      (previousValue, element) => previousValue + (element as num));
 
   }
   
   
   List<double> getMean() {
     // calculate mean if null then return value
-    if (this.arithmeticMean == null) 
-      this.arithmeticMean = this.summation / n;
+    arithmeticMean ??= summation / n;
 
-    if (this.geometricMean == null) {
+    if (geometricMean == null) {
       // GM = (x1*x2...xn)^(1/n)
-      var xn = this.sortedList.fold(sortedList[0], (previousValue, element) => previousValue*element);
-      this.geometricMean = math.pow(xn, 1/n);
+      final xn = sortedList.fold(sortedList[0],
+        (previousValue, element) => previousValue * element) as num;
+      geometricMean = math.pow(xn, 1/n) as double;
     }
     
-    if (this.ponderedMean == null) {
-      // PM = p1*X1 + p2*X2 + pn*Xn / n 
-      // frecuency assigned as default weight (p)
-      this.ponderedMean = this.getFrecuencies().fold(0, (previousValue, element) => 
-          previousValue + ( (element[0] as num) * (element[1] as num))) / n;
-    }
-    return [this.arithmeticMean, this.geometricMean, this.ponderedMean];
+    ponderedMean ??= getFrecuencies().fold(0,
+      (previousValue, element) => 
+          previousValue + ((element[0] as num) * (element[1] as num))) / n
+          as double;
+    
+    return [arithmeticMean, geometricMean, ponderedMean];
   }
 
   // return [ [el, frecuency], [] ]
   List<List<T>> getFrecuencies() {
 
-    if (frecuenciesList.length != 0) 
+    if (frecuenciesList.isNotEmpty) {
       return frecuenciesList;
+    }
 
-    T tmpValue = sortedList[0];
-    int curFrecuency = 0;
+    var tmpValue = sortedList[0];
+    var curFrecuency = 0;
 
     // O(n)
-    for(int i = 1 ; i < sortedList.length ; i++) {
+    for(var i = 1; i < sortedList.length; i++) {
       curFrecuency++;
 
       if (tmpValue != sortedList[i] || i == (sortedList.length - 1)){
 
-        if (i == (sortedList.length-1) && tmpValue == sortedList[i])
-            curFrecuency++;
+        if (i == (sortedList.length-1) && tmpValue == sortedList[i]) {
+          curFrecuency++;
+        }
 
         frecuenciesList.add([tmpValue,(curFrecuency as T)]);
 
         if (i == (sortedList.length-1) && tmpValue != sortedList[i]) {
-            frecuenciesList.add([sortedList[i],(1 as T)]);
+          frecuenciesList.add([sortedList[i],(1 as T)]);
         } 
         curFrecuency = 0;
       } 
@@ -135,9 +137,9 @@ class Stats<T> {
   
   List<T> getMode() {
     // calculate if null
-    if (this.mode == null) {  
-      List<T> tmpModes = new List<T>();
-      List<T> tmpMode = new List<T>();
+    if (mode == null) {  
+      final tmpModes = <T>[];
+      var tmpMode = <T>[];
 
       tmpMode = getFrecuencies()[0];
       tmpModes.add(tmpMode[0]);
@@ -148,8 +150,9 @@ class Stats<T> {
         // cur element appears more times than curMode 
         if ((tmpMode[1] as num) < (getFrecuencies()[i][1] as num)) {
           tmpMode = getFrecuencies()[i];
-          tmpModes.clear();
-          tmpModes.add(tmpMode[0]);
+          tmpModes
+            ..clear()
+            ..add(tmpMode[0]);
           continue;
         }
         // if cur element has same frecuency than tmpMode then is added to list
@@ -157,137 +160,133 @@ class Stats<T> {
           tmpModes.add(getFrecuencies()[i][0]);
         }
       }
-      this.mode = tmpModes;
+      mode = tmpModes;
     }
 
-    return this.mode;
+    return mode;
   }
 
   int _getMedianPosition() {
-    if (this._medianPosition == null) {
-      if (n % 2 == 0)
-        this._medianPosition = (n + 1) ~/ 2;
-      else
-        this._medianPosition = n ~/ 2;
+    if (_medianPosition == null) {
+      if (n % 2 == 0) {
+        _medianPosition = (n + 1) ~/ 2;
+      } else {
+        _medianPosition = n ~/ 2;
+      }
     }
 
-    return this._medianPosition;
+    return _medianPosition;
   }
 
   num getMedian() {
-    if (this.median == null) {
-      if (n % 2 == 0)
-        this.median = ((this.sortedList[n ~/ 2 -1] as num) + (this.sortedList[n ~/ 2] as num)) / 2;
-      else
-        this.median = this.sortedList[n ~/ 2] as num;
+    if (median == null) {
+      if (n % 2 == 0) {
+        median = (
+          (sortedList[n ~/ 2 -1] as num) + (sortedList[n ~/ 2] as num)
+        ) / 2;
+      } else {
+        median = sortedList[n ~/ 2] as num;
+      }
     }
-    return this.median;
+    return median;
   }
 
   num _getMedianOfList(List<T> list) {
-
     list.sort();
-    int _n = list.length;  
+    final _n = list.length;  
+    var medianOfList =  list[_n ~/ 2] as num;
 
-    if (_n % 2 == 0)
-      return  ((list[(_n) ~/ 2 -1 ] as num) + (list[(_n) ~/2] as num)) /2;
-    else
-      return list[_n ~/ 2] as num;
+    if (_n % 2 == 0) {
+      medianOfList = (
+        (list[(_n ~/ 2) - 1] as num) + (list[_n ~/ 2] as num)
+      ) / 2;
+    }
+
+    return medianOfList;
   }
 
   // [sample,population]
   List<double> getVariance() {
-    if (this.variance == null) {
+    if (variance == null) {
       // E (Xi-mean) : i = 1 to n
-      double Xn = this.sortedList.fold(0, (previousValue, element) => 
-        previousValue + math.pow((element as num) - this.getMean()[0], 2)
-      );            
+      final Xn = sortedList.fold(0, (previousValue, element) => 
+        previousValue + math.pow((element as num) - getMean()[0], 2)
+      ) as double;            
 
-      this.variance = [ (Xn / (this.n - 1)) , Xn / this.n ] ;
-
+      variance = [(Xn / (n - 1)) , Xn / n] ;
     }
-    return this.variance;
+    
+    return variance;
   }
 
   // [sample,population]
-  List<double> getStandardDeviation() {
-    if (this.standardDeviation == null) {
-      this.standardDeviation =  [math.sqrt(this.getVariance()[0]), math.sqrt(this.getVariance()[1])];
-    }
-
-    return this.standardDeviation;
-  }
+  List<double> getStandardDeviation() =>  standardDeviation ??= [
+      math.sqrt(getVariance()[0]),
+      math.sqrt(getVariance()[1])
+    ];
 
   @pragma('stats:gruped-frecuency-data-functions')
 
-  num getRange() {
-    return this.range;
-  }
+  num getRange() => range;
 
   //  Agrouped data
   
   int getIntervalsBySturgesRule() {
     //  3.22 * math.log10(this.n);
-    if (this.k != null)
+    if (this.k != null) {
       return this.k;
+    }
     // ln/ln10 = log10
-    double k =  1 + (3.322 * (math.log(this.n)/math.ln10));
-    int floorK = k.floor();
+    var k =  1 + (3.322 * (math.log(n)/math.ln10));
+    final floorK = k.floor();
 
-    if (floorK % 2 == 0)
-       this.k = floorK + 1;
-    else
+    if (floorK % 2 == 0) {
+      this.k = floorK + 1;
+    } else {
       this.k = floorK;
+    }
 
     return this.k;
   }
 
   int getIntervalsByNumber(int classes) {
-    double k =  classes/this.n;
-    int floorK = k.floor();
-    if (floorK % 2 == 0)
-      return floorK + 1;
+    final k =  classes / n;
+    var floorK = k.floor();
+
+    if (floorK % 2 == 0) {
+      floorK += 1;
+    }
+
     return floorK;
   }
 
-  double getAmplitude() {
-    if (this.ai != null)
-      return this.ai;
-
-    // sturges rule by default
-    this.ai = this.getRange() / this.getIntervalsBySturgesRule();
-    return this.ai;
-  }
+  double getAmplitude() => ai ??= getRange() / getIntervalsBySturgesRule();
 
   /// Gets grouped frecuency map
-  List<Map<String, dynamic>> getGroupedFrecuencyMap() {
-    if (this._groupedFrecuencyMap == null)
-      this._groupedFrecuencyMap = this._calculateGroupedFrecuencyMap();
-    
-    return this._groupedFrecuencyMap;
-  }
+  List<Map<String, dynamic>> getGroupedFrecuencyMap() =>
+    _groupedFrecuencyMap ??= _calculateGroupedFrecuencyMap();
 
   /// Generates a grouped frecuency map through a list
   List<Map<String, dynamic>> _calculateGroupedFrecuencyMap() {
-    List<Map<String, dynamic>> groupedFrecuencyMap = List<Map<String, dynamic>>();
+    final groupedFrecuencyMap = <Map<String, dynamic>>[];
 
-    int indexOfClass = 0;
-    Map<String, dynamic> classLimitElement = Map<String, dynamic>();
+    var indexOfClass = 0;
+    var classLimitElement = <String, dynamic>{};
     
-    this._summationOfXiFi = 0.0;
+    _summationOfXiFi = 0.0;
 
     // Gets amplitude and intervals of data
-    final amplitudeOfInterval = this.getAmplitude();
-    final numberOfIntervals = this.getIntervalsBySturgesRule();
+    final amplitudeOfInterval = getAmplitude();
+    final numberOfIntervals = getIntervalsBySturgesRule();
     // Defines frecuencies
-    int accumulatedFrecuency = 0;
+    var accumulatedFrecuency = 0;
     // Defines the class limits
-    double lowerClassLimit = this.min.toDouble();
-    double upperClassLimit = 0.0;
+    var lowerClassLimit = min.toDouble();
+    var upperClassLimit = 0.0;
 
     // Calculates the limit class and results
-    for (indexOfClass; indexOfClass < numberOfIntervals; indexOfClass++) {
-      classLimitElement = Map<String, dynamic>();
+    for (indexOfClass = 0; indexOfClass < numberOfIntervals; indexOfClass++) {
+      classLimitElement = <String, dynamic>{};
 
       // Initializes the class limits
       classLimitElement['lowerClassLimit'] = lowerClassLimit;
@@ -295,27 +294,29 @@ class Stats<T> {
       classLimitElement['upperClassLimit'] = upperClassLimit;
 
       // Calculates the mid point of the class limit
-      classLimitElement['midpoint'] = this._calculateMidpoint(
-        lowerClassLimit: classLimitElement['lowerClassLimit'],
-        upperClassLimit: classLimitElement['upperClassLimit']
+      classLimitElement['midpoint'] = _calculateMidpoint(
+        lowerClassLimit: classLimitElement['lowerClassLimit'] as double,
+        upperClassLimit: classLimitElement['upperClassLimit'] as double
       );
 
       // Calculates absolute frecuencies for class limit
-      classLimitElement['absoluteFrecuency'] = this._calculateAbsoluteFrecuency(
-        lowerClassLimit: classLimitElement['lowerClassLimit'],
-        upperClassLimit: classLimitElement['upperClassLimit']
+      classLimitElement['absoluteFrecuency'] = _calculateAbsoluteFrecuency(
+        lowerClassLimit: classLimitElement['lowerClassLimit'] as double,
+        upperClassLimit: classLimitElement['upperClassLimit'] as double
       );
 
-      classLimitElement['accumulatedRelativeFrecuency'] = this._calculateAbsoluteRelativeFrecuency(
-        absoluteFrecuency: classLimitElement['absoluteFrecuency'].toDouble()
-      );
+      classLimitElement['accumulatedRelativeFrecuency'] =
+        _calculateAbsoluteRelativeFrecuency(
+          absoluteFrecuency: classLimitElement['absoluteFrecuency'] as int
+        );
 
-      accumulatedFrecuency += classLimitElement['absoluteFrecuency'];
+      accumulatedFrecuency += classLimitElement['absoluteFrecuency'] as int;
       classLimitElement['accumulatedFrecuency'] = accumulatedFrecuency;
 
       // Accumulates midpoint times absolute frecuency of class limit
-      classLimitElement['XiFi'] = classLimitElement['midpoint'] * classLimitElement['absoluteFrecuency'];
-      this._summationOfXiFi += classLimitElement['XiFi'];
+      classLimitElement['XiFi'] =
+        classLimitElement['midpoint'] * classLimitElement['absoluteFrecuency'];
+      _summationOfXiFi += classLimitElement['XiFi'] as double;
 
       groupedFrecuencyMap.add(classLimitElement);
 
@@ -339,82 +340,92 @@ class Stats<T> {
     double lowerClassLimit,
     double upperClassLimit
   }) {
-    int counterOfFrecuncy = 0;
-    int indexInSortedList = 0;
-    for (indexInSortedList; indexInSortedList < this.sortedList.length; indexInSortedList++) {
+    var counterOfFrecuncy = 0;
+    var indexInSortedList = 0;
+    for (
+      indexInSortedList = 0;
+      indexInSortedList < sortedList.length;
+      indexInSortedList++
+    ) {
       if (
-        (this.sortedList[indexInSortedList] as num) >= lowerClassLimit &&
-        (this.sortedList[indexInSortedList] as num) < upperClassLimit
-      )
+        (sortedList[indexInSortedList] as num) >= lowerClassLimit &&
+        (sortedList[indexInSortedList] as num) < upperClassLimit
+      ) {
         counterOfFrecuncy++;
+      }
     }
-    // print(this.sortedList.where(item => item >= lowerClassLimit && item < upperClassLimit));
+    // print(this.sortedList.where(
+    //   item => item >= lowerClassLimit && item < upperClassLimit)
+    // );
     return counterOfFrecuncy;
   }
 
   /// Calculates absolute relative frecuency for a class limit
   double _calculateAbsoluteRelativeFrecuency({
-    double absoluteFrecuency
-  }) {
-    return absoluteFrecuency / this.n;
-  }
+    int absoluteFrecuency
+  }) => absoluteFrecuency / n;
 
   @pragma('stats:mean-of-group-data')
 
   /// Gets the media of grouped frecuency table
   double getMeanOfGroupedData() {
-    if (this._groupedFrecuencyMap == null)
-      this._groupedFrecuencyMap = this._calculateGroupedFrecuencyMap();
+    _groupedFrecuencyMap ??= _calculateGroupedFrecuencyMap();
 
-    if (this._groupedMean == null)
-      this._groupedMean = this._summationOfXiFi / this.n;
-
-    return this._groupedMean;
+    return _groupedMean ??= _summationOfXiFi / n;
   }
 
   @pragma('stats:modian-of-group-data')
 
   /// Gets the median of grouped frecuency table
   double getMedianOfGroupedData() {
-    if (this._groupedFrecuencyMap == null)
-      this._groupedFrecuencyMap = this._calculateGroupedFrecuencyMap();
+    _groupedFrecuencyMap ??= _calculateGroupedFrecuencyMap();
 
-    if (this._groupedMedian == null) {
-      int indexOfGroupedFrecuencyMap = 0;
-      int medianPosition = this._getMedianPosition();
-      int previousAccumulatedFrecuency = 0;
+    if (_groupedMedian == null) {
+      var indexOfGroupedFrecuencyMap = 0;
+      final medianPosition = _getMedianPosition();
+      var previousAccumulatedFrecuency = 0;
+      var accumulatedFrecuency = 0;
 
       for (
-        indexOfGroupedFrecuencyMap;
-        indexOfGroupedFrecuencyMap < this._groupedFrecuencyMap.length;
+        indexOfGroupedFrecuencyMap = 0;
+        indexOfGroupedFrecuencyMap < _groupedFrecuencyMap.length;
         indexOfGroupedFrecuencyMap++
       ) {
+        accumulatedFrecuency = _groupedFrecuencyMap
+            [indexOfGroupedFrecuencyMap]['accumulatedFrecuency'] as int;
 
         if (indexOfGroupedFrecuencyMap > 0) {
-          previousAccumulatedFrecuency = this._groupedFrecuencyMap[indexOfGroupedFrecuencyMap - 1]['accumulatedFrecuency'];
+          previousAccumulatedFrecuency = _groupedFrecuencyMap
+            [indexOfGroupedFrecuencyMap - 1]['accumulatedFrecuency'] as int;
         }
 
         // Get median in upper class limit
-        if (medianPosition == this._groupedFrecuencyMap[indexOfGroupedFrecuencyMap]['accumulatedFrecuency']) {
-          this._groupedMedian = this._groupedFrecuencyMap[indexOfGroupedFrecuencyMap]['upperClassLimit'];
+        if (
+          medianPosition == _groupedFrecuencyMap
+            [indexOfGroupedFrecuencyMap]['accumulatedFrecuency']
+        ) {
+          _groupedMedian = _groupedFrecuencyMap
+            [indexOfGroupedFrecuencyMap]['upperClassLimit'] as double;
           break;
         }
         // Calculates median
         else if (
           indexOfGroupedFrecuencyMap > 0 &&
-          medianPosition < this._groupedFrecuencyMap[indexOfGroupedFrecuencyMap]['accumulatedFrecuency']
+          medianPosition < accumulatedFrecuency
         ) {
-          this._groupedMedian = this._calculateMedianOfGroupedData(
-            lowerClassLimit: this._groupedFrecuencyMap[indexOfGroupedFrecuencyMap]['lowerClassLimit'],
+          _groupedMedian = _calculateMedianOfGroupedData(
+            lowerClassLimit: _groupedFrecuencyMap
+              [indexOfGroupedFrecuencyMap]['lowerClassLimit'] as double,
             previousAccumulatedFrecuency: previousAccumulatedFrecuency,
-            absoluteFrecuency: this._groupedFrecuencyMap[indexOfGroupedFrecuencyMap]['absoluteFrecuency']
+            absoluteFrecuency: _groupedFrecuencyMap
+              [indexOfGroupedFrecuencyMap]['absoluteFrecuency'] as int
           );
           break;
         }
       }
     }
 
-    return this._groupedMedian;
+    return _groupedMedian;
   }
 
   /// Calculates the median of grouped frecuency data
@@ -422,27 +433,26 @@ class Stats<T> {
     double lowerClassLimit,
     int previousAccumulatedFrecuency,
     int absoluteFrecuency
-  }) {
-    return lowerClassLimit + ((((this.n / 2) - previousAccumulatedFrecuency) / absoluteFrecuency) * this.getAmplitude());
-  }
+  }) => lowerClassLimit +
+    ((((n / 2) - previousAccumulatedFrecuency) / absoluteFrecuency) *
+    getAmplitude());
 
   @pragma('stats:mode-of-group-data')
 
   List<double> getModeOfGroupedData() {
-    if (this._groupedFrecuencyMap == null)
-      this._groupedFrecuencyMap = this._calculateGroupedFrecuencyMap();
+    _groupedFrecuencyMap ??= _calculateGroupedFrecuencyMap();
 
-    if (this._groupedMode == null) {
-      int indexOfGroupedFrecuencyMap = 0;
-      int maxFrecuencyClass = _getMaxFrecuencyClass();
-      int previousAbsoluteFrecuency = 0;
-      int nextAbsoluteFrecuency = 0;
+    if (_groupedMode == null) {
+      var indexOfGroupedFrecuencyMap = 0;
+      final maxFrecuencyClass = _getMaxFrecuencyClass();
+      var previousAbsoluteFrecuency = 0;
+      var nextAbsoluteFrecuency = 0;
 
-      this._groupedMode = List<double>();
+      _groupedMode = <double>[];
 
       for (
-        indexOfGroupedFrecuencyMap;
-        indexOfGroupedFrecuencyMap < this._groupedFrecuencyMap.length;
+        indexOfGroupedFrecuencyMap= 0;
+        indexOfGroupedFrecuencyMap < _groupedFrecuencyMap.length;
         indexOfGroupedFrecuencyMap++
       ) {
         if (maxFrecuencyClass == 1) {
@@ -450,32 +460,37 @@ class Stats<T> {
         }
         
         if (indexOfGroupedFrecuencyMap > 0) {
-          previousAbsoluteFrecuency = this._groupedFrecuencyMap[indexOfGroupedFrecuencyMap - 1]['absoluteFrecuency'];
+          previousAbsoluteFrecuency = _groupedFrecuencyMap
+            [indexOfGroupedFrecuencyMap - 1]['absoluteFrecuency'] as int;
         }
 
-        if (indexOfGroupedFrecuencyMap < this._groupedFrecuencyMap.length - 1) {
-          nextAbsoluteFrecuency = this._groupedFrecuencyMap[indexOfGroupedFrecuencyMap + 1]['absoluteFrecuency'];
+        if (indexOfGroupedFrecuencyMap < _groupedFrecuencyMap.length - 1) {
+          nextAbsoluteFrecuency = _groupedFrecuencyMap
+            [indexOfGroupedFrecuencyMap + 1]['absoluteFrecuency'] as int;
         } else {
           nextAbsoluteFrecuency = 0;
         }
         
         // Get mode in max class limit with max absolute frecuency
         if (
-          maxFrecuencyClass == this._groupedFrecuencyMap[indexOfGroupedFrecuencyMap]['absoluteFrecuency']
+          maxFrecuencyClass == _groupedFrecuencyMap
+            [indexOfGroupedFrecuencyMap]['absoluteFrecuency']
         ) {
-          this._groupedMode.add(
-            this._calculateModeOfGroupedData(
-              lowerClassLimit: this._groupedFrecuencyMap[indexOfGroupedFrecuencyMap]['lowerClassLimit'],
+          _groupedMode.add(
+            _calculateModeOfGroupedData(
+              lowerClassLimit: _groupedFrecuencyMap
+                [indexOfGroupedFrecuencyMap]['lowerClassLimit'] as double,
               previousAbsoluteFrecuency: previousAbsoluteFrecuency,
               nextAbsoluteFrecuency: nextAbsoluteFrecuency,
-              currentAbsoluteFrecuency: this._groupedFrecuencyMap[indexOfGroupedFrecuencyMap]['absoluteFrecuency']
+              currentAbsoluteFrecuency: _groupedFrecuencyMap
+                [indexOfGroupedFrecuencyMap]['absoluteFrecuency'] as int
             )
           );
         }
       }
     }
 
-    return this._groupedMode;
+    return _groupedMode;
   }
 
   /// Calculates the median of grouped frecuency data
@@ -485,63 +500,70 @@ class Stats<T> {
     int nextAbsoluteFrecuency,
     int currentAbsoluteFrecuency
   }) {
-    int previousSubstractionOfFi = currentAbsoluteFrecuency - previousAbsoluteFrecuency;
-    int nextSubstractionOfFi = currentAbsoluteFrecuency - nextAbsoluteFrecuency;
-    return lowerClassLimit + (((previousSubstractionOfFi) / (previousSubstractionOfFi + nextSubstractionOfFi)) * this.getAmplitude());
+    final previousSubstractionOfFi =
+      currentAbsoluteFrecuency - previousAbsoluteFrecuency;
+    final nextSubstractionOfFi =
+      currentAbsoluteFrecuency - nextAbsoluteFrecuency;
+    return 
+      lowerClassLimit +
+      ((previousSubstractionOfFi /
+        (previousSubstractionOfFi + nextSubstractionOfFi)) *
+      getAmplitude());
   }
 
   /// Gets maximum absolute frecuency in the class limits
   int _getMaxFrecuencyClass() {
-    if (this._groupedFrecuencyMap == null)
-      this._groupedFrecuencyMap = this._calculateGroupedFrecuencyMap();
+    _groupedFrecuencyMap ??= _calculateGroupedFrecuencyMap();
 
-    if (this._maxFrecuencyClass == null) {
-      List<Map<String, dynamic>> tmpGroupedFrecuencyMap = List<Map<String, dynamic>>.from(this._groupedFrecuencyMap);
-      tmpGroupedFrecuencyMap.sort(
-        (a, b) => (a['absoluteFrecuency'] as num).compareTo(b['absoluteFrecuency'] as num)
-      );
-      this._maxFrecuencyClass = tmpGroupedFrecuencyMap[tmpGroupedFrecuencyMap.length - 1]['absoluteFrecuency'];
+    if (_maxFrecuencyClass == null) {
+      final tmpGroupedFrecuencyMap =
+        List<Map<String, dynamic>>.from(_groupedFrecuencyMap)
+        ..sort(
+          (a, b) =>
+            (a['absoluteFrecuency'] as num)
+            .compareTo(b['absoluteFrecuency'] as num)
+        );
+      _maxFrecuencyClass = tmpGroupedFrecuencyMap
+        [tmpGroupedFrecuencyMap.length - 1]['absoluteFrecuency'] as int;
     }
 
-    return this._maxFrecuencyClass;
+    return _maxFrecuencyClass;
   }
 
   // measures of dispersion for grouped data
 
   // [sample,population]
   List<double> getVarianceGrouped() {
-    if (this.varianceGrouped == null) {
-      double mean = this.getMeanOfGroupedData();
+    if (varianceGrouped == null) {
+      final mean = getMeanOfGroupedData();
       // E (interval - mean)^2 * (frecuency) 
-      double sum = 0;
-      for (Map<String, dynamic> frecuencyRow in getGroupedFrecuencyMap()) {
-          sum += math.pow(frecuencyRow['midpoint'] - mean,2) * frecuencyRow['absoluteFrecuency'];
+      var sum = 0.0;
+      for (var frecuencyRow in getGroupedFrecuencyMap()) {
+          sum +=
+            math.pow((frecuencyRow['midpoint'] as double) - mean, 2) *
+              (frecuencyRow['absoluteFrecuency'] as num) as double;
       } 
-      this.varianceGrouped = [sum / (this.n-1), sum / this.n];
+      varianceGrouped = [sum / (n-1), sum / n];
 
     }
-    return this.varianceGrouped;
+    return varianceGrouped;
   }
 
   // [sample, population]
-  List<double> getStandardDeviationGrouped() {
-     if (this.standardDeviationGrouped == null) {
-      this.standardDeviationGrouped =  [math.sqrt(this.getVarianceGrouped()[0]), 
-                                math.sqrt(this.getVarianceGrouped()[1])];
-    }
-
-    return this.standardDeviationGrouped;
-  }
+  List<double> getStandardDeviationGrouped() => standardDeviationGrouped ??= [
+      math.sqrt(getVarianceGrouped()[0]), 
+      math.sqrt(getVarianceGrouped()[1])
+    ];
 
   // position measures
   List<T> _copyListInRange(List<T> source, int start, int end) {
 
-    List<T> target = new List<T>();
+    final target = <T>[];
     if (source.length < end) {
       return null;
     }
     
-    for(int i = start ; i < end ; ++i) {
+    for(var i = start ; i < end ; ++i) {
       target.add(source[i]);
     }
     return target;
@@ -550,16 +572,25 @@ class Stats<T> {
   // quartiles, deciles, percentiles
   List<num> getQuartiles() {
 
-    if (this.quartiles == null) {
+    if (quartiles == null) {
       
-      num q1 = this._getMedianOfList(this._copyListInRange(this.sortedList, 0, this._getMedianPosition()));
-      num q2 = this.getMedian();
-      num q3 = this._getMedianOfList(this._copyListInRange(this.sortedList, this._getMedianPosition(), this.sortedList.length));
+      final getMedianOfList = _getMedianOfList(
+        _copyListInRange(sortedList, 0, _getMedianPosition())
+      );
+      final q1 = getMedianOfList;
+      final q2 = getMedian();
+      final q3 =_getMedianOfList(
+        _copyListInRange(
+          sortedList,
+          _getMedianPosition(),
+          sortedList.length
+        )
+      );
 
-      this.quartiles = [q1,q2,q3];
+      quartiles = [q1,q2,q3];
     }
 
-    return this.quartiles;
+    return quartiles;
   }
 
 }
