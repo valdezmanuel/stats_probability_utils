@@ -209,11 +209,11 @@ class Stats<T> {
   List<double> getVariance() {
     if (variance == null) {
       // E (Xi-mean) : i = 1 to n
-      final Xn = sortedList.fold(0, (previousValue, element) => 
+      final xn = sortedList.fold(0, (previousValue, element) => 
         previousValue + math.pow((element as num) - getMean()[0], 2)
       ) as double;            
 
-      variance = [(Xn / (n - 1)) , Xn / n] ;
+      variance = [(xn / (n - 1)) , xn / n] ;
     }
     
     return variance;
@@ -237,7 +237,7 @@ class Stats<T> {
       return this.k;
     }
     // ln/ln10 = log10
-    var k =  1 + (3.322 * (math.log(n)/math.ln10));
+    final k =  1 + (3.322 * (math.log(n)/math.ln10));
     final floorK = k.floor();
 
     if (floorK % 2 == 0) {
@@ -331,9 +331,7 @@ class Stats<T> {
   double _calculateMidpoint({
     double lowerClassLimit,
     double upperClassLimit
-  }) {
-    return (lowerClassLimit + upperClassLimit) / 2;
-  }
+  }) => (lowerClassLimit + upperClassLimit) / 2;
 
   /// Calculates absolute frecuency for a class limit
   int _calculateAbsoluteFrecuency({
