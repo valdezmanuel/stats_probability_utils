@@ -1,7 +1,8 @@
-import '../lib/src/stats.dart';
-
+import 'package:stats_probability_utils/stats_probability_utils.dart';
 void main() {
-  Stats stats = Stats([1, 1, 1, 2, 3, 4, 2, 5, 3, 6, 5, 4, 6, 5, 4, 6, 7, 3, 6, 7]);
+  final stats = Stats(
+    [1, 1, 1, 2, 3, 4, 2, 5, 3, 6, 5, 4, 6, 5, 4, 6, 7, 3, 6, 7]
+  );
 
   print(stats.sortedList);
   print(stats.min);
@@ -17,21 +18,25 @@ void main() {
   print(stats.getStandardDeviation());
   print(stats.getRange());
 
-  print("--grouped data--");
+  print('--grouped data--');
   print(stats.getIntervalsBySturgesRule());
   print(stats.getAmplitude());
   print('-- Grouped frecuency table --\n\n');
   Map<String, dynamic> groupedClassLimit;
-  List<Map<String, dynamic>> groupedTable = stats.getGroupedFrecuencyMap();
+  final groupedTable = stats.getGroupedFrecuencyMap();
   for (groupedClassLimit in groupedTable) {
     print('------------------');
     print('  Lower class limit: ${ groupedClassLimit['lowerClassLimit'] }');
     print('  Upper class limit: ${ groupedClassLimit['upperClassLimit'] }');
     print('  Mid point (Xi): ${ groupedClassLimit['midpoint'] }');
-    print('  Absolute frecuency (Fi): ${ groupedClassLimit['absoluteFrecuency'] }');
-    print('  Accumulated Relative frecuency (Fr): ${ groupedClassLimit['accumulatedRelativeFrecuency'] }');
-    print('  Accumulated frecuency (F): ${ groupedClassLimit['accumulatedFrecuency'] }');
-    print('  XiFi: ${ groupedClassLimit['XiFi'] }');
+    print('  Absolute frecuency (Fi): ${ groupedClassLimit
+      ['absoluteFrecuency'] }');
+    print('  Accumulated Relative frecuency (Fr): ${ groupedClassLimit
+      ['accumulatedRelativeFrecuency'] }');
+    print('  Accumulated frecuency (F): ${ groupedClassLimit
+      ['accumulatedFrecuency'] }');
+    print('  XiFi: ${ groupedClassLimit
+      ['XiFi'] }');
     print('------------------\n\n');
   }
 
