@@ -8,7 +8,6 @@
 import 'dart:math' as math;
 
 class Stats<T> {
-  
   List<T> list;
   List<T> sortedList;
   List<List<T>> frecuenciesList;
@@ -19,7 +18,7 @@ class Stats<T> {
 
   num min;
   num max;
-  
+
   // mean
   double summation;
   int n;
@@ -42,10 +41,10 @@ class Stats<T> {
   // grouped data
   List<double> standardDeviationGrouped;
   List<double> varianceGrouped;
-  
+
   int k;
   double ai;
-   
+
   // Grouped mean
   double _summationOfXiFi;
   double _groupedMean;
@@ -62,26 +61,23 @@ class Stats<T> {
   List<num> deciles;
   List<num> percentiles;
 
-  // constructor  
+  // constructor
   Stats(List<T> list) {
-
     // init lists
     sortedList = [...list]..sort();
     frecuenciesList = <List<T>>[];
-    
+
     max = sortedList.last as num;
     min = sortedList.first as num;
 
-    range =  max - min;
+    range = max - min;
 
     n = sortedList.length;
     // sum all elements in list
-    summation = sortedList.fold(0,
-      (previousValue, element) => previousValue + (element as num));
-
+    summation = sortedList.fold(
+        0, (previousValue, element) => previousValue + (element as num));
   }
-  
-  
+
   List<double> getMean() {
     // calculate mean if null then return value
     arithmeticMean ??= summation / n;
@@ -89,21 +85,21 @@ class Stats<T> {
     if (geometricMean == null) {
       // GM = (x1*x2...xn)^(1/n)
       final xn = sortedList.fold(sortedList[0],
-        (previousValue, element) => previousValue * element) as num;
-      geometricMean = math.pow(xn, 1/n) as double;
+          (previousValue, element) => previousValue * element) as num;
+      geometricMean = math.pow(xn, 1 / n) as double;
     }
-    
-    ponderedMean ??= getFrecuencies().fold(0,
-      (previousValue, element) => 
-          previousValue + ((element[0] as num) * (element[1] as num))) / n
-          as double;
-    
+
+    ponderedMean ??= getFrecuencies().fold(
+            0,
+            (previousValue, element) =>
+                previousValue + ((element[0] as num) * (element[1] as num))) /
+        n as double;
+
     return [arithmeticMean, geometricMean, ponderedMean];
   }
 
   // return [ [el, frecuency], [] ]
   List<List<T>> getFrecuencies() {
-
     if (frecuenciesList.isNotEmpty) {
       return frecuenciesList;
     }
@@ -112,32 +108,31 @@ class Stats<T> {
     var curFrecuency = 0;
 
     // O(n)
-    for(var i = 1; i < sortedList.length; i++) {
+    for (var i = 1; i < sortedList.length; i++) {
       curFrecuency++;
 
-      if (tmpValue != sortedList[i] || i == (sortedList.length - 1)){
-
-        if (i == (sortedList.length-1) && tmpValue == sortedList[i]) {
+      if (tmpValue != sortedList[i] || i == (sortedList.length - 1)) {
+        if (i == (sortedList.length - 1) && tmpValue == sortedList[i]) {
           curFrecuency++;
         }
 
-        frecuenciesList.add([tmpValue,(curFrecuency as T)]);
+        frecuenciesList.add([tmpValue, (curFrecuency as T)]);
 
-        if (i == (sortedList.length-1) && tmpValue != sortedList[i]) {
-          frecuenciesList.add([sortedList[i],(1 as T)]);
-        } 
+        if (i == (sortedList.length - 1) && tmpValue != sortedList[i]) {
+          frecuenciesList.add([sortedList[i], (1 as T)]);
+        }
         curFrecuency = 0;
-      } 
-      
+      }
+
       tmpValue = sortedList[i];
     }
 
     return frecuenciesList;
   }
-  
+
   List<T> getMode() {
     // calculate if null
-    if (mode == null) {  
+    if (mode == null) {
       final tmpModes = <T>[];
       var tmpMode = <T>[];
 
@@ -146,8 +141,7 @@ class Stats<T> {
 
       // O(n)
       for (var i = 1; i < getFrecuencies().length; i++) {
-        
-        // cur element appears more times than curMode 
+        // cur element appears more times than curMode
         if ((tmpMode[1] as num) < (getFrecuencies()[i][1] as num)) {
           tmpMode = getFrecuencies()[i];
           tmpModes
@@ -181,9 +175,8 @@ class Stats<T> {
   num getMedian() {
     if (median == null) {
       if (n % 2 == 0) {
-        median = (
-          (sortedList[n ~/ 2 -1] as num) + (sortedList[n ~/ 2] as num)
-        ) / 2;
+        median =
+            ((sortedList[n ~/ 2 - 1] as num) + (sortedList[n ~/ 2] as num)) / 2;
       } else {
         median = sortedList[n ~/ 2] as num;
       }
@@ -193,13 +186,12 @@ class Stats<T> {
 
   num _getMedianOfList(List<T> list) {
     list.sort();
-    final _n = list.length;  
-    var medianOfList =  list[_n ~/ 2] as num;
+    final _n = list.length;
+    var medianOfList = list[_n ~/ 2] as num;
 
     if (_n % 2 == 0) {
-      medianOfList = (
-        (list[(_n ~/ 2) - 1] as num) + (list[_n ~/ 2] as num)
-      ) / 2;
+      medianOfList =
+          ((list[(_n ~/ 2) - 1] as num) + (list[_n ~/ 2] as num)) / 2;
     }
 
     return medianOfList;
@@ -209,35 +201,36 @@ class Stats<T> {
   List<double> getVariance() {
     if (variance == null) {
       // E (Xi-mean) : i = 1 to n
-      final xn = sortedList.fold(0, (previousValue, element) => 
-        previousValue + math.pow((element as num) - getMean()[0], 2)
-      ) as double;            
+      final xn = sortedList.fold(
+              0,
+              (previousValue, element) =>
+                  previousValue + math.pow((element as num) - getMean()[0], 2))
+          as double;
 
-      variance = [(xn / (n - 1)) , xn / n] ;
+      variance = [(xn / (n - 1)), xn / n];
     }
-    
+
     return variance;
   }
 
   // [sample,population]
-  List<double> getStandardDeviation() =>  standardDeviation ??= [
-      math.sqrt(getVariance()[0]),
-      math.sqrt(getVariance()[1])
-    ];
+  List<double> getStandardDeviation() => standardDeviation ??= [
+        math.sqrt(getVariance()[0]),
+        math.sqrt(getVariance()[1])
+      ];
 
   @pragma('stats:gruped-frecuency-data-functions')
-
   num getRange() => range;
 
   //  Agrouped data
-  
+
   int getIntervalsBySturgesRule() {
     //  3.22 * math.log10(this.n);
     if (this.k != null) {
       return this.k;
     }
     // ln/ln10 = log10
-    final k =  1 + (3.322 * (math.log(n)/math.ln10));
+    final k = 1 + (3.322 * (math.log(n) / math.ln10));
     final floorK = k.floor();
 
     if (floorK % 2 == 0) {
@@ -250,7 +243,7 @@ class Stats<T> {
   }
 
   int getIntervalsByNumber(int classes) {
-    final k =  classes / n;
+    final k = classes / n;
     var floorK = k.floor();
 
     if (floorK % 2 == 0) {
@@ -264,7 +257,7 @@ class Stats<T> {
 
   /// Gets grouped frecuency map
   List<Map<String, dynamic>> getGroupedFrecuencyMap() =>
-    _groupedFrecuencyMap ??= _calculateGroupedFrecuencyMap();
+      _groupedFrecuencyMap ??= _calculateGroupedFrecuencyMap();
 
   /// Generates a grouped frecuency map through a list
   List<Map<String, dynamic>> _calculateGroupedFrecuencyMap() {
@@ -272,7 +265,7 @@ class Stats<T> {
 
     var indexOfClass = 0;
     var classLimitElement = <String, dynamic>{};
-    
+
     _summationOfXiFi = 0.0;
 
     // Gets amplitude and intervals of data
@@ -295,27 +288,24 @@ class Stats<T> {
 
       // Calculates the mid point of the class limit
       classLimitElement['midpoint'] = _calculateMidpoint(
-        lowerClassLimit: classLimitElement['lowerClassLimit'] as double,
-        upperClassLimit: classLimitElement['upperClassLimit'] as double
-      );
+          lowerClassLimit: classLimitElement['lowerClassLimit'] as double,
+          upperClassLimit: classLimitElement['upperClassLimit'] as double);
 
       // Calculates absolute frecuencies for class limit
       classLimitElement['absoluteFrecuency'] = _calculateAbsoluteFrecuency(
-        lowerClassLimit: classLimitElement['lowerClassLimit'] as double,
-        upperClassLimit: classLimitElement['upperClassLimit'] as double
-      );
+          lowerClassLimit: classLimitElement['lowerClassLimit'] as double,
+          upperClassLimit: classLimitElement['upperClassLimit'] as double);
 
       classLimitElement['accumulatedRelativeFrecuency'] =
-        _calculateAbsoluteRelativeFrecuency(
-          absoluteFrecuency: classLimitElement['absoluteFrecuency'] as int
-        );
+          _calculateAbsoluteRelativeFrecuency(
+              absoluteFrecuency: classLimitElement['absoluteFrecuency'] as int);
 
       accumulatedFrecuency += classLimitElement['absoluteFrecuency'] as int;
       classLimitElement['accumulatedFrecuency'] = accumulatedFrecuency;
 
       // Accumulates midpoint times absolute frecuency of class limit
-      classLimitElement['XiFi'] =
-        classLimitElement['midpoint'] * classLimitElement['absoluteFrecuency'];
+      classLimitElement['XiFi'] = classLimitElement['midpoint'] *
+          classLimitElement['absoluteFrecuency'];
       _summationOfXiFi += classLimitElement['XiFi'] as double;
 
       groupedFrecuencyMap.add(classLimitElement);
@@ -328,27 +318,19 @@ class Stats<T> {
   }
 
   /// Calculates a mid point for a class limit
-  double _calculateMidpoint({
-    double lowerClassLimit,
-    double upperClassLimit
-  }) => (lowerClassLimit + upperClassLimit) / 2;
+  double _calculateMidpoint({double lowerClassLimit, double upperClassLimit}) =>
+      (lowerClassLimit + upperClassLimit) / 2;
 
   /// Calculates absolute frecuency for a class limit
-  int _calculateAbsoluteFrecuency({
-    double lowerClassLimit,
-    double upperClassLimit
-  }) {
+  int _calculateAbsoluteFrecuency(
+      {double lowerClassLimit, double upperClassLimit}) {
     var counterOfFrecuncy = 0;
     var indexInSortedList = 0;
-    for (
-      indexInSortedList = 0;
-      indexInSortedList < sortedList.length;
-      indexInSortedList++
-    ) {
-      if (
-        (sortedList[indexInSortedList] as num) >= lowerClassLimit &&
-        (sortedList[indexInSortedList] as num) < upperClassLimit
-      ) {
+    for (indexInSortedList = 0;
+        indexInSortedList < sortedList.length;
+        indexInSortedList++) {
+      if ((sortedList[indexInSortedList] as num) >= lowerClassLimit &&
+          (sortedList[indexInSortedList] as num) < upperClassLimit) {
         counterOfFrecuncy++;
       }
     }
@@ -359,9 +341,8 @@ class Stats<T> {
   }
 
   /// Calculates absolute relative frecuency for a class limit
-  double _calculateAbsoluteRelativeFrecuency({
-    int absoluteFrecuency
-  }) => absoluteFrecuency / n;
+  double _calculateAbsoluteRelativeFrecuency({int absoluteFrecuency}) =>
+      absoluteFrecuency / n;
 
   @pragma('stats:mean-of-group-data')
 
@@ -384,40 +365,36 @@ class Stats<T> {
       var previousAccumulatedFrecuency = 0;
       var accumulatedFrecuency = 0;
 
-      for (
-        indexOfGroupedFrecuencyMap = 0;
-        indexOfGroupedFrecuencyMap < _groupedFrecuencyMap.length;
-        indexOfGroupedFrecuencyMap++
-      ) {
-        accumulatedFrecuency = _groupedFrecuencyMap
-            [indexOfGroupedFrecuencyMap]['accumulatedFrecuency'] as int;
+      for (indexOfGroupedFrecuencyMap = 0;
+          indexOfGroupedFrecuencyMap < _groupedFrecuencyMap.length;
+          indexOfGroupedFrecuencyMap++) {
+        accumulatedFrecuency = _groupedFrecuencyMap[indexOfGroupedFrecuencyMap]
+            ['accumulatedFrecuency'] as int;
 
         if (indexOfGroupedFrecuencyMap > 0) {
-          previousAccumulatedFrecuency = _groupedFrecuencyMap
-            [indexOfGroupedFrecuencyMap - 1]['accumulatedFrecuency'] as int;
+          previousAccumulatedFrecuency =
+              _groupedFrecuencyMap[indexOfGroupedFrecuencyMap - 1]
+                  ['accumulatedFrecuency'] as int;
         }
 
         // Get median in upper class limit
-        if (
-          medianPosition == _groupedFrecuencyMap
-            [indexOfGroupedFrecuencyMap]['accumulatedFrecuency']
-        ) {
-          _groupedMedian = _groupedFrecuencyMap
-            [indexOfGroupedFrecuencyMap]['upperClassLimit'] as double;
+        if (medianPosition ==
+            _groupedFrecuencyMap[indexOfGroupedFrecuencyMap]
+                ['accumulatedFrecuency']) {
+          _groupedMedian = _groupedFrecuencyMap[indexOfGroupedFrecuencyMap]
+              ['upperClassLimit'] as double;
           break;
         }
         // Calculates median
-        else if (
-          indexOfGroupedFrecuencyMap > 0 &&
-          medianPosition < accumulatedFrecuency
-        ) {
+        else if (indexOfGroupedFrecuencyMap > 0 &&
+            medianPosition < accumulatedFrecuency) {
           _groupedMedian = _calculateMedianOfGroupedData(
-            lowerClassLimit: _groupedFrecuencyMap
-              [indexOfGroupedFrecuencyMap]['lowerClassLimit'] as double,
-            previousAccumulatedFrecuency: previousAccumulatedFrecuency,
-            absoluteFrecuency: _groupedFrecuencyMap
-              [indexOfGroupedFrecuencyMap]['absoluteFrecuency'] as int
-          );
+              lowerClassLimit: _groupedFrecuencyMap[indexOfGroupedFrecuencyMap]
+                  ['lowerClassLimit'] as double,
+              previousAccumulatedFrecuency: previousAccumulatedFrecuency,
+              absoluteFrecuency:
+                  _groupedFrecuencyMap[indexOfGroupedFrecuencyMap]
+                      ['absoluteFrecuency'] as int);
           break;
         }
       }
@@ -427,16 +404,15 @@ class Stats<T> {
   }
 
   /// Calculates the median of grouped frecuency data
-  double _calculateMedianOfGroupedData({
-    double lowerClassLimit,
-    int previousAccumulatedFrecuency,
-    int absoluteFrecuency
-  }) => lowerClassLimit +
-    ((((n / 2) - previousAccumulatedFrecuency) / absoluteFrecuency) *
-    getAmplitude());
+  double _calculateMedianOfGroupedData(
+          {double lowerClassLimit,
+          int previousAccumulatedFrecuency,
+          int absoluteFrecuency}) =>
+      lowerClassLimit +
+      ((((n / 2) - previousAccumulatedFrecuency) / absoluteFrecuency) *
+          getAmplitude());
 
   @pragma('stats:mode-of-group-data')
-
   List<double> getModeOfGroupedData() {
     _groupedFrecuencyMap ??= _calculateGroupedFrecuencyMap();
 
@@ -448,42 +424,39 @@ class Stats<T> {
 
       _groupedMode = <double>[];
 
-      for (
-        indexOfGroupedFrecuencyMap= 0;
-        indexOfGroupedFrecuencyMap < _groupedFrecuencyMap.length;
-        indexOfGroupedFrecuencyMap++
-      ) {
+      for (indexOfGroupedFrecuencyMap = 0;
+          indexOfGroupedFrecuencyMap < _groupedFrecuencyMap.length;
+          indexOfGroupedFrecuencyMap++) {
         if (maxFrecuencyClass == 1) {
           break;
         }
-        
+
         if (indexOfGroupedFrecuencyMap > 0) {
-          previousAbsoluteFrecuency = _groupedFrecuencyMap
-            [indexOfGroupedFrecuencyMap - 1]['absoluteFrecuency'] as int;
+          previousAbsoluteFrecuency =
+              _groupedFrecuencyMap[indexOfGroupedFrecuencyMap - 1]
+                  ['absoluteFrecuency'] as int;
         }
 
         if (indexOfGroupedFrecuencyMap < _groupedFrecuencyMap.length - 1) {
-          nextAbsoluteFrecuency = _groupedFrecuencyMap
-            [indexOfGroupedFrecuencyMap + 1]['absoluteFrecuency'] as int;
+          nextAbsoluteFrecuency =
+              _groupedFrecuencyMap[indexOfGroupedFrecuencyMap + 1]
+                  ['absoluteFrecuency'] as int;
         } else {
           nextAbsoluteFrecuency = 0;
         }
-        
+
         // Get mode in max class limit with max absolute frecuency
-        if (
-          maxFrecuencyClass == _groupedFrecuencyMap
-            [indexOfGroupedFrecuencyMap]['absoluteFrecuency']
-        ) {
-          _groupedMode.add(
-            _calculateModeOfGroupedData(
-              lowerClassLimit: _groupedFrecuencyMap
-                [indexOfGroupedFrecuencyMap]['lowerClassLimit'] as double,
+        if (maxFrecuencyClass ==
+            _groupedFrecuencyMap[indexOfGroupedFrecuencyMap]
+                ['absoluteFrecuency']) {
+          _groupedMode.add(_calculateModeOfGroupedData(
+              lowerClassLimit: _groupedFrecuencyMap[indexOfGroupedFrecuencyMap]
+                  ['lowerClassLimit'] as double,
               previousAbsoluteFrecuency: previousAbsoluteFrecuency,
               nextAbsoluteFrecuency: nextAbsoluteFrecuency,
-              currentAbsoluteFrecuency: _groupedFrecuencyMap
-                [indexOfGroupedFrecuencyMap]['absoluteFrecuency'] as int
-            )
-          );
+              currentAbsoluteFrecuency:
+                  _groupedFrecuencyMap[indexOfGroupedFrecuencyMap]
+                      ['absoluteFrecuency'] as int));
         }
       }
     }
@@ -492,21 +465,19 @@ class Stats<T> {
   }
 
   /// Calculates the median of grouped frecuency data
-  double _calculateModeOfGroupedData({
-    double lowerClassLimit,
-    int previousAbsoluteFrecuency,
-    int nextAbsoluteFrecuency,
-    int currentAbsoluteFrecuency
-  }) {
+  double _calculateModeOfGroupedData(
+      {double lowerClassLimit,
+      int previousAbsoluteFrecuency,
+      int nextAbsoluteFrecuency,
+      int currentAbsoluteFrecuency}) {
     final previousSubstractionOfFi =
-      currentAbsoluteFrecuency - previousAbsoluteFrecuency;
+        currentAbsoluteFrecuency - previousAbsoluteFrecuency;
     final nextSubstractionOfFi =
-      currentAbsoluteFrecuency - nextAbsoluteFrecuency;
-    return 
-      lowerClassLimit +
-      ((previousSubstractionOfFi /
-        (previousSubstractionOfFi + nextSubstractionOfFi)) *
-      getAmplitude());
+        currentAbsoluteFrecuency - nextAbsoluteFrecuency;
+    return lowerClassLimit +
+        ((previousSubstractionOfFi /
+                (previousSubstractionOfFi + nextSubstractionOfFi)) *
+            getAmplitude());
   }
 
   /// Gets maximum absolute frecuency in the class limits
@@ -515,14 +486,12 @@ class Stats<T> {
 
     if (_maxFrecuencyClass == null) {
       final tmpGroupedFrecuencyMap =
-        List<Map<String, dynamic>>.from(_groupedFrecuencyMap)
-        ..sort(
-          (a, b) =>
-            (a['absoluteFrecuency'] as num)
-            .compareTo(b['absoluteFrecuency'] as num)
-        );
-      _maxFrecuencyClass = tmpGroupedFrecuencyMap
-        [tmpGroupedFrecuencyMap.length - 1]['absoluteFrecuency'] as int;
+          List<Map<String, dynamic>>.from(_groupedFrecuencyMap)
+            ..sort((a, b) => (a['absoluteFrecuency'] as num)
+                .compareTo(b['absoluteFrecuency'] as num));
+      _maxFrecuencyClass =
+          tmpGroupedFrecuencyMap[tmpGroupedFrecuencyMap.length - 1]
+              ['absoluteFrecuency'] as int;
     }
 
     return _maxFrecuencyClass;
@@ -534,34 +503,31 @@ class Stats<T> {
   List<double> getVarianceGrouped() {
     if (varianceGrouped == null) {
       final mean = getMeanOfGroupedData();
-      // E (interval - mean)^2 * (frecuency) 
+      // E (interval - mean)^2 * (frecuency)
       var sum = 0.0;
       for (var frecuencyRow in getGroupedFrecuencyMap()) {
-          sum +=
-            math.pow((frecuencyRow['midpoint'] as double) - mean, 2) *
-              (frecuencyRow['absoluteFrecuency'] as num) as double;
-      } 
-      varianceGrouped = [sum / (n-1), sum / n];
-
+        sum += math.pow((frecuencyRow['midpoint'] as double) - mean, 2) *
+            (frecuencyRow['absoluteFrecuency'] as num) as double;
+      }
+      varianceGrouped = [sum / (n - 1), sum / n];
     }
     return varianceGrouped;
   }
 
   // [sample, population]
   List<double> getStandardDeviationGrouped() => standardDeviationGrouped ??= [
-      math.sqrt(getVarianceGrouped()[0]), 
-      math.sqrt(getVarianceGrouped()[1])
-    ];
+        math.sqrt(getVarianceGrouped()[0]),
+        math.sqrt(getVarianceGrouped()[1])
+      ];
 
   // position measures
   List<T> _copyListInRange(List<T> source, int start, int end) {
-
     final target = <T>[];
     if (source.length < end) {
       return null;
     }
-    
-    for(var i = start ; i < end ; ++i) {
+
+    for (var i = start; i < end; ++i) {
       target.add(source[i]);
     }
     return target;
@@ -569,26 +535,17 @@ class Stats<T> {
 
   // quartiles, deciles, percentiles
   List<num> getQuartiles() {
-
     if (quartiles == null) {
-      
       final getMedianOfList = _getMedianOfList(
-        _copyListInRange(sortedList, 0, _getMedianPosition())
-      );
+          _copyListInRange(sortedList, 0, _getMedianPosition()));
       final q1 = getMedianOfList;
       final q2 = getMedian();
-      final q3 =_getMedianOfList(
-        _copyListInRange(
-          sortedList,
-          _getMedianPosition(),
-          sortedList.length
-        )
-      );
+      final q3 = _getMedianOfList(_copyListInRange(
+          sortedList, _getMedianPosition(), sortedList.length));
 
-      quartiles = [q1,q2,q3];
+      quartiles = [q1, q2, q3];
     }
 
     return quartiles;
   }
-
 }
