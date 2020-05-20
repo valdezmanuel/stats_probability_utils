@@ -1,3 +1,8 @@
+## 0.9.0+2
+
+  - The unit tests for the library were added
+  - The stats class was fixed to handle the base case of zero and an elements
+
 ## 0.9.0+1
 
   - Static analyzer was added
