@@ -1,7 +1,7 @@
 import 'package:stats_probability_utils/stats_probability_utils.dart';
 void main() {
   final stats = Stats(
-    [1, 1, 1, 2, 3, 4, 2, 5, 3, 6, 5, 4, 6, 5, 4, 6, 7, 3, 6, 7]
+    [2, 1, 4, 3, 2, 2, 6, 8, 10, 9]
   );
 
   print(stats.sortedList);
@@ -39,10 +39,6 @@ void main() {
       ['XiFi'] }');
     print('------------------\n\n');
   }
-
-  print(stats.getRange());
-  print(stats.getIntervalsBySturgesRule());
-  print(stats.getAmplitude());
   
   print('------------------\n\n');
 

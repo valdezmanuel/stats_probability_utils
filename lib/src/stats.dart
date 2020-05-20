@@ -63,6 +63,10 @@ class Stats<T> {
 
   // constructor
   Stats(List<T> list) {
+    if (list.isEmpty) {
+      throw ArgumentError.value(list, 'list', 'Cannot be empty.');
+    }
+
     // init lists
     sortedList = [...list]..sort();
     frecuenciesList = <List<T>>[];
@@ -136,22 +140,28 @@ class Stats<T> {
       final tmpModes = <T>[];
       var tmpMode = <T>[];
 
-      tmpMode = getFrecuencies()[0];
+      final listOfFrequencies = getFrecuencies();
+
+      if (listOfFrequencies.isEmpty) {
+        return mode = <T>[];
+      }
+
+      tmpMode = listOfFrequencies[0];
       tmpModes.add(tmpMode[0]);
 
       // O(n)
-      for (var i = 1; i < getFrecuencies().length; i++) {
+      for (var i = 1; i < listOfFrequencies.length; i++) {
         // cur element appears more times than curMode
-        if ((tmpMode[1] as num) < (getFrecuencies()[i][1] as num)) {
-          tmpMode = getFrecuencies()[i];
+        if ((tmpMode[1] as num) < (listOfFrequencies[i][1] as num)) {
+          tmpMode = listOfFrequencies[i];
           tmpModes
             ..clear()
             ..add(tmpMode[0]);
           continue;
         }
         // if cur element has same frecuency than tmpMode then is added to list
-        if ((tmpMode[1] as num) == (getFrecuencies()[i][1] as num)) {
-          tmpModes.add(getFrecuencies()[i][0]);
+        if ((tmpMode[1] as num) == (listOfFrequencies[i][1] as num)) {
+          tmpModes.add(listOfFrequencies[i][0]);
         }
       }
       mode = tmpModes;
@@ -186,8 +196,14 @@ class Stats<T> {
 
   num _getMedianOfList(List<T> list) {
     list.sort();
+    num medianOfList;
     final _n = list.length;
-    var medianOfList = list[_n ~/ 2] as num;
+
+    if (list.isEmpty) {
+      return medianOfList = 0;
+    }
+
+    medianOfList = list[_n ~/ 2] as num;
 
     if (_n % 2 == 0) {
       medianOfList =
@@ -206,8 +222,11 @@ class Stats<T> {
               (previousValue, element) =>
                   previousValue + math.pow((element as num) - getMean()[0], 2))
           as double;
-
-      variance = [(xn / (n - 1)), xn / n];
+      if (n > 1) {
+        variance = [(xn / (n - 1)), xn / n];
+      } else {
+        variance = [0.0, 0.0];
+      }
     }
 
     return variance;
@@ -416,7 +435,10 @@ class Stats<T> {
   List<double> getModeOfGroupedData() {
     _groupedFrecuencyMap ??= _calculateGroupedFrecuencyMap();
 
-    if (_groupedMode == null) {
+    if (
+      _groupedMode == null &&
+      n > 1
+    ) {
       var indexOfGroupedFrecuencyMap = 0;
       final maxFrecuencyClass = _getMaxFrecuencyClass();
       var previousAbsoluteFrecuency = 0;
@@ -459,6 +481,10 @@ class Stats<T> {
                       ['absoluteFrecuency'] as int));
         }
       }
+    }
+
+    if (n == 1) {
+      _groupedMode = <double>[];
     }
 
     return _groupedMode;
@@ -509,7 +535,11 @@ class Stats<T> {
         sum += math.pow((frecuencyRow['midpoint'] as double) - mean, 2) *
             (frecuencyRow['absoluteFrecuency'] as num) as double;
       }
-      varianceGrouped = [sum / (n - 1), sum / n];
+      if (n > 1) {
+       varianceGrouped = [sum / (n - 1), sum / n];
+      } else {
+        varianceGrouped = [0.0, 0.0];
+      }
     }
     return varianceGrouped;
   }
