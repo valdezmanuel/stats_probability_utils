@@ -82,7 +82,7 @@ void main() {
         'min': 0,
         'max': 0,
         'summation': 0.0,
-        'mean': [0, 0, 0],
+        'mean': [0.0, 0.0, 0.0],
         'frequencies': [],
         'mode': [],
         'median': 0,
@@ -96,9 +96,9 @@ void main() {
             'lowerClassLimit': 0.0,
             'upperClassLimit': 0.0,
             'midpoint': 0.0,
-            'absoluteFrecuency': 0,
-            'accumulatedRelativeFrecuency': 0.0,
-            'accumulatedFrecuency': 0,
+            'absoluteFrecuency': 1,
+            'accumulatedRelativeFrecuency': 1.0,
+            'accumulatedFrecuency': 1.0,
             'XiFi': 0.0
           }
         ],
@@ -150,19 +150,19 @@ void main() {
           },
           {
             'lowerClassLimit': 1.6666666666666665,
-            'upperClassLimit': 1.9999999999999998,
-            'midpoint': 1.833333333333333,
-            'absoluteFrecuency': 0,
-            'accumulatedRelativeFrecuency': 0.0,
-            'accumulatedFrecuency': 1,
-            'XiFi': 0.0
+            'upperClassLimit': 2.0,
+            'midpoint': 1.8333333333333333,
+            'absoluteFrecuency': 1,
+            'accumulatedRelativeFrecuency': 0.5,
+            'accumulatedFrecuency': 2,
+            'XiFi': 1.8333333333333333
           }
         ],
-        'meanOfGroupedData': 0.5833333333333333,
+        'meanOfGroupedData': 1.5,
         'medianOfGroupedData': 1.3333333333333333,
         'modeOfGroupedData': [],
-        'varianceGrouped': [0.3402777777777777, 0.17013888888888884],
-        'standardDeviationGrouped': [0.5833333333333333, 0.41247895569215265],
+        'varianceGrouped': [0.22222222222222227, 0.11111111111111113],
+        'standardDeviationGrouped': [0.47140452079103173, 0.33333333333333337],
         'quartiles': [1, 1.5, 2]
       }
     );
@@ -208,7 +208,7 @@ void main() {
           },
           {
             'lowerClassLimit': 4.6,
-            'upperClassLimit': 6.3999999999999995,
+            'upperClassLimit': 6.4,
             'midpoint': 5.5,
             'absoluteFrecuency': 1,
             'accumulatedRelativeFrecuency': 0.1,
@@ -216,29 +216,29 @@ void main() {
             'XiFi': 5.5
           },
           {
-            'lowerClassLimit': 6.3999999999999995,
+            'lowerClassLimit': 6.4,
             'upperClassLimit': 8.2,
-            'midpoint': 7.299999999999999,
+            'midpoint': 7.3,
             'absoluteFrecuency': 1,
             'accumulatedRelativeFrecuency': 0.1,
             'accumulatedFrecuency': 8,
-            'XiFi': 7.299999999999999
+            'XiFi': 7.3
           },
           {
             'lowerClassLimit': 8.2,
             'upperClassLimit': 10.0,
             'midpoint': 9.1,
-            'absoluteFrecuency': 1,
-            'accumulatedRelativeFrecuency': 0.1,
-            'accumulatedFrecuency': 9,
-            'XiFi': 9.1
+            'absoluteFrecuency': 2,
+            'accumulatedRelativeFrecuency': 0.2,
+            'accumulatedFrecuency': 10,
+            'XiFi': 18.2
           }
         ],
-        'meanOfGroupedData': 3.69,
+        'meanOfGroupedData': 4.6,
         'medianOfGroupedData': 3.6999999999999997,
         'modeOfGroupedData': [2.2],
-        'varianceGrouped': [6.488099999999999, 5.83929],
-        'standardDeviationGrouped': [2.547174905655283, 2.4164622902085604],
+        'varianceGrouped': [8.82, 7.938],
+        'standardDeviationGrouped': [2.9698484809834995, 2.817445651649735],
         'quartiles': [2, 3.5, 8]
       }
     );
