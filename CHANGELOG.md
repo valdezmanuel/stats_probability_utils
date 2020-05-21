@@ -1,7 +1,13 @@
+## 0.9.1
+
+  - The limit class precision for decimal values was fixed
+  - The frequency in grouped data was fixed
+  - The unit tests for the library were update
+
 ## 0.9.0+2
 
   - The unit tests for the library were added
-  - The stats class was fixed to handle the base case of zero and an elements
+  - The stats class was fixed to handle the base case of zero and one element
 
 ## 0.9.0+1
 

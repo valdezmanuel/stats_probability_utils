@@ -6,6 +6,7 @@
 //
 
 import 'dart:math' as math;
+import 'package:decimal/decimal.dart';
 
 class Stats<T> {
   List<T> list;
@@ -302,7 +303,9 @@ class Stats<T> {
 
       // Initializes the class limits
       classLimitElement['lowerClassLimit'] = lowerClassLimit;
-      upperClassLimit = lowerClassLimit + amplitudeOfInterval;
+      upperClassLimit =
+        (Decimal.parse(lowerClassLimit.toString()) +
+        Decimal.parse(amplitudeOfInterval.toString())).toDouble();
       classLimitElement['upperClassLimit'] = upperClassLimit;
 
       // Calculates the mid point of the class limit
@@ -313,7 +316,8 @@ class Stats<T> {
       // Calculates absolute frecuencies for class limit
       classLimitElement['absoluteFrecuency'] = _calculateAbsoluteFrecuency(
           lowerClassLimit: classLimitElement['lowerClassLimit'] as double,
-          upperClassLimit: classLimitElement['upperClassLimit'] as double);
+          upperClassLimit: classLimitElement['upperClassLimit'] as double,
+          isLastClassLimit: indexOfClass == numberOfIntervals - 1);
 
       classLimitElement['accumulatedRelativeFrecuency'] =
           _calculateAbsoluteRelativeFrecuency(
@@ -342,14 +346,21 @@ class Stats<T> {
 
   /// Calculates absolute frecuency for a class limit
   int _calculateAbsoluteFrecuency(
-      {double lowerClassLimit, double upperClassLimit}) {
+      {double lowerClassLimit, double upperClassLimit, bool isLastClassLimit}) {
     var counterOfFrecuncy = 0;
     var indexInSortedList = 0;
     for (indexInSortedList = 0;
         indexInSortedList < sortedList.length;
         indexInSortedList++) {
       if ((sortedList[indexInSortedList] as num) >= lowerClassLimit &&
-          (sortedList[indexInSortedList] as num) < upperClassLimit) {
+          (
+            (sortedList[indexInSortedList] as num) < upperClassLimit ||
+            (
+              isLastClassLimit &&
+              (sortedList[indexInSortedList] as num) <= upperClassLimit
+            )
+          )
+        ) {
         counterOfFrecuncy++;
       }
     }
@@ -383,6 +394,10 @@ class Stats<T> {
       final medianPosition = _getMedianPosition();
       var previousAccumulatedFrecuency = 0;
       var accumulatedFrecuency = 0;
+
+      if (n == 1) {
+        return _groupedMedian = 0.0;
+      }
 
       for (indexOfGroupedFrecuencyMap = 0;
           indexOfGroupedFrecuencyMap < _groupedFrecuencyMap.length;
