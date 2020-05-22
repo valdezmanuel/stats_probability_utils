@@ -1,7 +1,7 @@
 name: stats_probability_utils
 description: >-
   Calculate measures of central tendency, position and dispersion for grouped and ungrouped data.
-version: 0.9.0
+version: 0.9.1
 homepage: https://github.com/valdezmanuel/stats_probability_utils
 
 environment:
