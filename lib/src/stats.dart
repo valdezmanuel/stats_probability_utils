@@ -303,9 +303,9 @@ class Stats<T> {
 
       // Initializes the class limits
       classLimitElement['lowerClassLimit'] = lowerClassLimit;
-      upperClassLimit =
-        (Decimal.parse(lowerClassLimit.toString()) +
-        Decimal.parse(amplitudeOfInterval.toString())).toDouble();
+      upperClassLimit = (Decimal.parse(lowerClassLimit.toString()) +
+              Decimal.parse(amplitudeOfInterval.toString()))
+          .toDouble();
       classLimitElement['upperClassLimit'] = upperClassLimit;
 
       // Calculates the mid point of the class limit
@@ -353,14 +353,9 @@ class Stats<T> {
         indexInSortedList < sortedList.length;
         indexInSortedList++) {
       if ((sortedList[indexInSortedList] as num) >= lowerClassLimit &&
-          (
-            (sortedList[indexInSortedList] as num) < upperClassLimit ||
-            (
-              isLastClassLimit &&
-              (sortedList[indexInSortedList] as num) <= upperClassLimit
-            )
-          )
-        ) {
+          ((sortedList[indexInSortedList] as num) < upperClassLimit ||
+              (isLastClassLimit &&
+                  (sortedList[indexInSortedList] as num) <= upperClassLimit))) {
         counterOfFrecuncy++;
       }
     }
@@ -450,10 +445,7 @@ class Stats<T> {
   List<double> getModeOfGroupedData() {
     _groupedFrecuencyMap ??= _calculateGroupedFrecuencyMap();
 
-    if (
-      _groupedMode == null &&
-      n > 1
-    ) {
+    if (_groupedMode == null && n > 1) {
       var indexOfGroupedFrecuencyMap = 0;
       final maxFrecuencyClass = _getMaxFrecuencyClass();
       var previousAbsoluteFrecuency = 0;
@@ -551,7 +543,7 @@ class Stats<T> {
             (frecuencyRow['absoluteFrecuency'] as num) as double;
       }
       if (n > 1) {
-       varianceGrouped = [sum / (n - 1), sum / n];
+        varianceGrouped = [sum / (n - 1), sum / n];
       } else {
         varianceGrouped = [0.0, 0.0];
       }
